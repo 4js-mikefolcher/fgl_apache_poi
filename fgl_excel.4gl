@@ -10,7 +10,12 @@ IMPORT JAVA org.apache.poi.ss.usermodel.CellStyle
 IMPORT JAVA org.apache.poi.ss.usermodel.HorizontalAlignment
 IMPORT JAVA org.apache.poi.ss.usermodel.Font
 IMPORT JAVA org.apache.poi.ss.usermodel.PrintSetup
-
+IMPORT JAVA org.apache.poi.ss.usermodel.DataFormat
+IMPORT JAVA java.util.Date
+IMPORT JAVA java.util.Calendar
+IMPORT JAVA java.text.SimpleDateFormat
+IMPORT JAVA java.time.LocalDateTime
+IMPORT JAVA java.time.ZoneId
 
 
 
@@ -21,7 +26,15 @@ PUBLIC TYPE rowType Row
 PUBLIC TYPE cellType Cell
 PUBLIC TYPE cellStyleType CellStyle
 PUBLIC TYPE fontType Font
+PUBLIC TYPE cellFormat DataFormat
 
+
+#Constants the corralate to the Built-in Formats
+PUBLIC CONSTANT cDecimalFormat = 40
+PUBLIC CONSTANT cMoneyFormat = 8
+PUBLIC CONSTANT cIntegerFormat = 38
+PUBLIC CONSTANT cDateFormat = 14
+PUBLIC CONSTANT cDatetimeFormat = 22
 
 
 FUNCTION workbook_create()
@@ -119,6 +132,29 @@ DEFINE v FLOAT
 END FUNCTION
 
 
+FUNCTION cell_date_set(c, v)
+DEFINE c cellType
+DEFINE v STRING
+DEFINE javaDate java.util.Date
+DEFINE dateFormatter SimpleDateFormat
+
+	LET dateFormatter = java.text.SimpleDateFormat.create("yyyy-MM-dd")
+	LET javaDate = dateFormatter.parse(v)
+	CALL c.setCellValue(javaDate)
+END FUNCTION
+
+FUNCTION cell_datetime_set(c, v)
+DEFINE c cellType
+DEFINE v STRING
+DEFINE javaDatetime Calendar
+DEFINE dateFormatter SimpleDateFormat
+
+	LET dateFormatter = java.text.SimpleDateFormat.create("yyyy-MM-dd HH:mm:ss")
+	LET javaDatetime = Calendar.getInstance()
+	CALL javaDatetime.setTime(dateFormatter.parse(v))
+	CALL c.setCellValue(LocalDateTime.ofInstant(javaDatetime.toInstant(), ZoneId.systemDefault()))
+
+END FUNCTION
 
 FUNCTION cell_formula_set(c, v)
 DEFINE c cellType
@@ -150,7 +186,26 @@ DEFINE s cellStyleType
     CALL c.setCellStyle(s)
 END FUNCTION
 
+FUNCTION cell_style_format_create(w workBookType, fmt STRING) RETURNS (cellStyleType)
+DEFINE c cellFormat
+DEFINE s cellStyleType
 
+	LET s = w.createCellStyle()
+	LET c = w.createDataFormat()
+	CALL s.setDataFormat(c.getFormat(fmt))
+
+	RETURN s
+
+END FUNCTION
+
+FUNCTION cell_style_builtin_create(w workBookType, fmt SMALLINT) RETURNS (cellStyleType)
+DEFINE s cellStyleType
+
+	LET s = w.createCellStyle()
+	CALL s.setDataFormat(fmt)
+
+	RETURN s
+END FUNCTION
 
 FUNCTION font_create(w)
 DEFINE w workBookType
