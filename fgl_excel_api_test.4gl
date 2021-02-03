@@ -58,6 +58,13 @@ MAIN
 	CALL excelHandler.setTitle("Test Spreadsheet API")
 	IF excelHandler.createSpreadsheet(util.JSONArray.fromFGL(dataList)) THEN
 		DISPLAY SFMT("Excel file path: %1", excelHandler.getFilename())
+		IF arg_val(1) == "web" THEN
+			CALL fgl_putfile(excelHandler.getFilename(), "gbc")
+			MENU
+				COMMAND "Exit"
+					EXIT MENU
+			END MENU
+		END IF
 	END IF
 
 END MAIN

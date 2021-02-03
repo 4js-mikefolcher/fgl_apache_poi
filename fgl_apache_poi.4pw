@@ -77,7 +77,7 @@
       </Library>
     </Group>
     <Group id="2026825588" label="test_program">
-      <Application binaryName="fgl_excel_api_test" dependencies="806207675,-579723415" id="-1827248064" label="fgl_excel_api_test">
+      <Application binaryName="fgl_excel_api_test" commandLineArguments="web" dependencies="806207675,-579723415" id="-1827248064" label="fgl_excel_api_test">
         <File filePath="fgl_excel_api_test.4gl"/>
       </Application>
       <Application binaryName="fgl_excel_calculation" id="419929947" label="fgl_excel_calculation">
